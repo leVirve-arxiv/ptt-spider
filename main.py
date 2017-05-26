@@ -39,3 +39,5 @@ if __name__ == '__main__':
         posts = coroutine_runner(coros)
 
         pprint.pprint(posts)
+
+        print('Total posts:', len(posts))

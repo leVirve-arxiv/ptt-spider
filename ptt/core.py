@@ -42,21 +42,19 @@ class PTTSpider():
         self.loop.run_until_complete(self.close())
 
     async def get_post(self, link):
-        print(self.board.post(link))
-        data = await self.get(self.board.post(link))
-        return parser.post_content(data)
+        return await self.get(self.board.post(link), 'post_content')
 
     async def get_meta(self, page):
-        data = await self.get(self.board.page(page))
-        return parser.post_metas(data)
+        return await self.get(self.board.page(page), 'post_metas')
 
     async def get_total_page_num(self):
-        data = await self.get(self.board.index())
-        return parser.previous_page_number(data) + 1
+        return await self.get(self.board.index(), 'previous_page_number') + 1
 
-    async def get(self, url):
+    async def get(self, url, parser_name):
         async with self.session.get(url, headers=self.headers) as resp:
-            return await resp.text()
+            data = await resp.text()
+            data_parser = getattr(parser, parser_name)
+            return data_parser(data)
 
     async def close(self):
         await self.session.close()
